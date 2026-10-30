@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.WanderingWords" parent="android:Theme.Material.NoActionBar">
+        <item name="android:colorAccent">#86C3AD</item>
+        <item name="android:windowBackground">#111618</item>
+        <item name="android:statusBarColor">#111618</item>
+        <item name="android:navigationBarColor">#111618</item>
+    </style>
+</resources>

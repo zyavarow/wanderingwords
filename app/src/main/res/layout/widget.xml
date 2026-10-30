@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:background="@drawable/glass"
+    android:paddingStart="18dp"
+    android:paddingEnd="18dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp">
+
+    <LinearLayout android:id="@+id/block1" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView android:id="@+id/theme1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textSize="9.5sp" android:textStyle="bold" android:letterSpacing="0.14"
+            android:textColor="#86C3AD" android:maxLines="1" android:ellipsize="end" />
+        <TextView android:id="@+id/word1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textSize="25sp" android:fontFamily="serif" android:textColor="#E5EBE7"
+            android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false"
+            android:layout_marginTop="2dp" />
+        <TextView android:id="@+id/def1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textSize="12.5sp" android:textColor="#B8C6C0" android:maxLines="2" android:ellipsize="end"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/block2" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp">
+        <TextView android:id="@+id/theme2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textSize="9.5sp" android:textStyle="bold" android:letterSpacing="0.14"
+            android:textColor="#86C3AD" android:maxLines="1" android:ellipsize="end" />
+        <TextView android:id="@+id/word2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textSize="25sp" android:fontFamily="serif" android:textColor="#E5EBE7"
+            android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false"
+            android:layout_marginTop="2dp" />
+        <TextView android:id="@+id/def2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textSize="12.5sp" android:textColor="#B8C6C0" android:maxLines="2" android:ellipsize="end"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
+</LinearLayout>
