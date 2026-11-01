@@ -47,23 +47,21 @@ public class AlarmReceiver extends BroadcastReceiver {
         LocalDate today = LocalDate.now();
         String title, body;
         String url = Words.LEXICON_URL;
-        if (Words.isReviewDay(today)) {
-            title = "Review day";
-            body = "Take ten minutes to recall this week's words.";
-            url += "#review";
-        } else {
-            List<Words.Word> ws = Words.forDate(c, today);
-            if (ws.isEmpty()) return;
-            StringBuilder t = new StringBuilder(), b = new StringBuilder();
-            for (Words.Word w : ws) {
-                if (t.length() > 0) { t.append(" · "); b.append("\n\n"); }
-                t.append(w.word);
-                b.append(w.word).append(" (").append(w.pos).append("): ").append(w.def)
-                 .append("\n“").append(w.example).append("”");
-            }
-            title = t.toString();
-            body = b.toString();
+        List<Words.Word> ws = Words.forDate(c, today);
+        if (ws.isEmpty()) return;
+        StringBuilder t = new StringBuilder(), b = new StringBuilder();
+        for (Words.Word w : ws) {
+            if (t.length() > 0) { t.append(" · "); b.append("\n\n"); }
+            t.append(w.word);
+            b.append(w.word).append(" (").append(w.pos).append("): ").append(w.def)
+             .append("\n\u201C").append(w.example).append("\u201D");
         }
+        if (Words.isReviewDay(today)) {
+            b.append("\n\nIt's Sunday review day too. Tap to recall this past week's words.");
+            url += "#review";
+        }
+        title = t.toString();
+        body = b.toString();
         Intent open = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         PendingIntent pi = PendingIntent.getActivity(c, 2, open,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);

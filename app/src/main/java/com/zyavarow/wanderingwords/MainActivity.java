@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
 
         List<Words.Word> ws = Words.forDate(this, today);
         if (Words.isReviewDay(today)) {
-            col.addView(text("Sunday is review day. Open your word page to recall this week's words.", 15, MUTED, null), gapTop(16));
+            col.addView(text("Sunday is review day. Recall this past week's words on your word page, then enjoy today's new ones.", 15, MUTED, null), gapTop(16));
         } else if (ws.isEmpty()) {
             col.addView(text("You've finished all the words in this list.", 15, MUTED, null), gapTop(16));
         }

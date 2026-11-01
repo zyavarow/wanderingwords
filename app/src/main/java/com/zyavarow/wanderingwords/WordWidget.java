@@ -39,19 +39,16 @@ public class WordWidget extends AppWidgetProvider {
         LocalDate today = LocalDate.now();
         List<Words.Word> ws = Words.forDate(c, today);
 
-        if (Words.isReviewDay(today)) {
-            v.setTextViewText(R.id.theme1, "SUNDAY");
-            v.setTextViewText(R.id.word1, "Review day");
-            v.setTextViewText(R.id.def1, "Tap to recall this week's words");
-            v.setViewVisibility(R.id.block2, View.GONE);
-        } else if (ws.isEmpty()) {
+        if (ws.isEmpty()) {
             v.setTextViewText(R.id.theme1, "WANDERING WORDS");
             v.setTextViewText(R.id.word1, "All words complete");
             v.setTextViewText(R.id.def1, "Tap to revisit your library");
             v.setViewVisibility(R.id.block2, View.GONE);
         } else {
             Words.Word a = ws.get(0);
-            v.setTextViewText(R.id.theme1, a.theme.toUpperCase());
+            String t1 = a.theme.toUpperCase();
+            if (Words.isReviewDay(today)) t1 = "REVIEW DAY  ·  " + t1;
+            v.setTextViewText(R.id.theme1, t1);
             v.setTextViewText(R.id.word1, a.word);
             v.setTextViewText(R.id.def1, a.def);
             if (ws.size() > 1) {

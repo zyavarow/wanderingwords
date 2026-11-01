@@ -43,28 +43,19 @@ public final class Words {
         return list;
     }
 
-    /** Number of word-days (Mon–Sat) from START up to, but not including, date. */
+    /** Days from START up to, but not including, date. Two new words every day. */
     static long slotIndex(LocalDate date) {
-        long days = ChronoUnit.DAYS.between(START, date);
-        if (days < 0) return -1;
-        long full = days / 7;
-        long n = full * 6;
-        LocalDate x = START.plusDays(full * 7);
-        while (x.isBefore(date)) {
-            if (x.getDayOfWeek() != DayOfWeek.SUNDAY) n++;
-            x = x.plusDays(1);
-        }
-        return n;
+        return ChronoUnit.DAYS.between(START, date);
     }
 
     public static boolean isReviewDay(LocalDate date) {
         return date.getDayOfWeek() == DayOfWeek.SUNDAY;
     }
 
-    /** Today's words: empty on Sundays, before the start date, or after the list ends. */
+    /** Today's words: empty before the start date or after the list ends. Sundays get words too. */
     public static List<Word> forDate(Context c, LocalDate date) {
         List<Word> out = new ArrayList<>();
-        if (isReviewDay(date) || date.isBefore(START)) return out;
+        if (date.isBefore(START)) return out;
         List<Word> all = all(c);
         long s = slotIndex(date) * PER_DAY;
         for (long i = s; i < s + PER_DAY && i < all.size(); i++) out.add(all.get((int) i));
