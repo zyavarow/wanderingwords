@@ -98,6 +98,36 @@ public class MainActivity extends Activity {
             col.addView(text("“" + w.example + "”", 17, MUTED, Typeface.create(Typeface.SERIF, Typeface.ITALIC)), gapTop(8));
         }
 
+        List<Words.Word> extras = Words.bonusOn(this, today);
+        if (!extras.isEmpty()) {
+            col.addView(text("Extra words today", 13, MUTED, Typeface.DEFAULT_BOLD), gapTop(32));
+        }
+        for (Words.Word w : extras) {
+            col.addView(label(w.theme), gapTop(18));
+            col.addView(text(w.word, 30, INK, Typeface.create(Typeface.SERIF, Typeface.NORMAL)), gapTop(2));
+            col.addView(text(w.pron + "  ·  " + w.pos, 13, MUTED, Typeface.MONOSPACE), gapTop(2));
+            col.addView(text(w.def, 16, INK, null), gapTop(8));
+            col.addView(text("\u201C" + w.example + "\u201D", 17, MUTED, Typeface.create(Typeface.SERIF, Typeface.ITALIC)), gapTop(8));
+        }
+        if (!extras.isEmpty()) {
+            Button write = new Button(this);
+            write.setText("Write sentences for extra words");
+            write.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(Words.LEXICON_URL + "#bonus" + Words.bonusTaken(this)))));
+            col.addView(write, gapTop(10));
+        }
+
+        Button more = new Button(this);
+        int left = Words.bonus(this).size() - Words.bonusTaken(this);
+        more.setText(left > 0 ? "+ One more word" : "No extra words left");
+        more.setEnabled(left > 0);
+        more.setOnClickListener(v -> {
+            if (Words.takeBonus(this) != null) {
+                setContentView(buildUi());
+            }
+        });
+        col.addView(more, gapTop(24));
+
         col.addView(label("Morning notification"), gapTop(40));
         LinearLayout row = new LinearLayout(this);
         row.setGravity(Gravity.CENTER_VERTICAL);

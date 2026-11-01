@@ -24,12 +24,11 @@ public final class Words {
         }
     }
 
-    private static List<Word> cache;
+    private static List<Word> cache, bonusCache;
 
-    public static synchronized List<Word> all(Context c) {
-        if (cache != null) return cache;
+    private static List<Word> load(Context c, String file) {
         List<Word> list = new ArrayList<>();
-        try (InputStream in = c.getAssets().open("words.json")) {
+        try (InputStream in = c.getAssets().open(file)) {
             java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
             byte[] chunk = new byte[16384];
             int n;
@@ -39,8 +38,51 @@ public final class Words {
         } catch (Exception e) {
             // leave list empty; UI shows a fallback message
         }
-        cache = list;
         return list;
+    }
+
+    public static synchronized List<Word> all(Context c) {
+        if (cache == null) cache = load(c, "words.json");
+        return cache;
+    }
+
+    public static synchronized List<Word> bonus(Context c) {
+        if (bonusCache == null) bonusCache = load(c, "bonus.json");
+        return bonusCache;
+    }
+
+    /* ---------- extra words ("One more word") ---------- */
+    // Stored as "index:yyyy-mm-dd" entries separated by ";", in the order they were taken.
+
+    public static int bonusTaken(Context c) {
+        String raw = Scheduler.prefs(c).getString("bonus", "");
+        return raw.isEmpty() ? 0 : raw.split(";").length;
+    }
+
+    public static List<Word> bonusOn(Context c, LocalDate date) {
+        List<Word> out = new ArrayList<>();
+        String raw = Scheduler.prefs(c).getString("bonus", "");
+        if (raw.isEmpty()) return out;
+        List<Word> pool = bonus(c);
+        for (String e : raw.split(";")) {
+            String[] kv = e.split(":");
+            if (kv.length == 2 && kv[1].equals(date.toString())) {
+                int i = Integer.parseInt(kv[0]);
+                if (i < pool.size()) out.add(pool.get(i));
+            }
+        }
+        return out;
+    }
+
+    /** Takes the next extra word, or returns null when the collection is used up. */
+    public static Word takeBonus(Context c) {
+        List<Word> pool = bonus(c);
+        int n = bonusTaken(c);
+        if (n >= pool.size()) return null;
+        String raw = Scheduler.prefs(c).getString("bonus", "");
+        String entry = n + ":" + LocalDate.now();
+        Scheduler.prefs(c).edit().putString("bonus", raw.isEmpty() ? entry : raw + ";" + entry).apply();
+        return pool.get(n);
     }
 
     /** Days from START up to, but not including, date. Two new words every day. */
