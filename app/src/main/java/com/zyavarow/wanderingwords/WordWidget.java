@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 import java.time.LocalDate;
 import java.util.List;
@@ -44,6 +45,29 @@ public class WordWidget extends AppWidgetProvider {
         if (ids.length == 0) return;
         RemoteViews v = build(c);
         for (int id : ids) mgr.updateAppWidget(id, v);
+    }
+
+    /** Compact mode: smaller type and tighter spacing so three words fit without resizing. */
+    static void applySizes(Context c, RemoteViews v, boolean compact) {
+        float word = compact ? 18f : 25f, theme = compact ? 8.5f : 9.5f, def = compact ? 11.5f : 12.5f;
+        int defLines = compact ? 1 : 2;
+        int gap = dp(c, compact ? 6 : 12), pad = dp(c, compact ? 10 : 14);
+        int[] words = {R.id.word1, R.id.word2, R.id.word3};
+        int[] themes = {R.id.theme1, R.id.theme2, R.id.theme3};
+        int[] defs = {R.id.def1, R.id.def2, R.id.def3};
+        for (int i = 0; i < 3; i++) {
+            v.setTextViewTextSize(words[i], TypedValue.COMPLEX_UNIT_SP, word);
+            v.setTextViewTextSize(themes[i], TypedValue.COMPLEX_UNIT_SP, theme);
+            v.setTextViewTextSize(defs[i], TypedValue.COMPLEX_UNIT_SP, def);
+            v.setInt(defs[i], "setMaxLines", defLines);
+        }
+        v.setViewPadding(R.id.block2, 0, gap, 0, 0);
+        v.setViewPadding(R.id.block3, 0, gap, 0, 0);
+        v.setViewPadding(R.id.root, dp(c, 18), pad, dp(c, 18), pad);
+    }
+
+    private static int dp(Context c, int v) {
+        return Math.round(v * c.getResources().getDisplayMetrics().density);
     }
 
     static RemoteViews build(Context c) {
@@ -86,6 +110,8 @@ public class WordWidget extends AppWidgetProvider {
         } else {
             v.setViewVisibility(R.id.block3, View.GONE);
         }
+
+        applySizes(c, v, !extras.isEmpty());
 
         Intent more = new Intent(c, WordWidget.class).setAction(ACTION_MORE);
         PendingIntent morePi = PendingIntent.getBroadcast(c, 3, more,
