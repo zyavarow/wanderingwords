@@ -21,6 +21,18 @@ public class WordWidget extends AppWidgetProvider {
         Scheduler.scheduleAll(c);
     }
 
+    public static final String ACTION_MORE = "com.zyavarow.wanderingwords.MORE";
+
+    @Override
+    public void onReceive(Context c, Intent intent) {
+        if (ACTION_MORE.equals(intent.getAction())) {
+            Words.takeBonus(c);
+            refreshAll(c);
+            return;
+        }
+        super.onReceive(c, intent);
+    }
+
     @Override
     public void onEnabled(Context c) {
         Scheduler.scheduleAll(c);
@@ -62,7 +74,28 @@ public class WordWidget extends AppWidgetProvider {
             }
         }
 
-        String url = Words.LEXICON_URL + (Words.isReviewDay(today) ? "#review" : "");
+        // Latest extra word taken today, shown in amber below the daily pair.
+        List<Words.Word> extras = Words.bonusOn(c, today);
+        if (!extras.isEmpty()) {
+            Words.Word x = extras.get(extras.size() - 1);
+            String label = extras.size() > 1 ? "EXTRA " + extras.size() + "  ·  " : "EXTRA  ·  ";
+            v.setViewVisibility(R.id.block3, View.VISIBLE);
+            v.setTextViewText(R.id.theme3, label + x.theme.toUpperCase());
+            v.setTextViewText(R.id.word3, x.word);
+            v.setTextViewText(R.id.def3, x.def);
+        } else {
+            v.setViewVisibility(R.id.block3, View.GONE);
+        }
+
+        Intent more = new Intent(c, WordWidget.class).setAction(ACTION_MORE);
+        PendingIntent morePi = PendingIntent.getBroadcast(c, 3, more,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        v.setOnClickPendingIntent(R.id.more, morePi);
+
+        // Tapping the widget opens the word page; on days with extra words it also records them there.
+        String hash = !extras.isEmpty() ? "#bonus" + Words.bonusTaken(c)
+                : (Words.isReviewDay(today) ? "#review" : "");
+        String url = Words.LEXICON_URL + hash;
         Intent open = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pi = PendingIntent.getActivity(c, 1, open,

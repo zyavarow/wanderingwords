@@ -123,6 +123,7 @@ public class MainActivity extends Activity {
         more.setEnabled(left > 0);
         more.setOnClickListener(v -> {
             if (Words.takeBonus(this) != null) {
+                WordWidget.refreshAll(this);
                 setContentView(buildUi());
             }
         });
