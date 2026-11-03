@@ -1,0 +1,352 @@
+<title>Daily Lexicon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single pocket-notebook column; headwords set large like a dictionary entry, tabs pinned at the bottom for thumb reach. */
+:root{
+  --paper:#F2F5F1; --sheet:#FFFFFF; --ink:#1C232B; --muted:#5C6B66; --rule:#D8E0DA;
+  --moss:#2E5E4E; --moss-soft:#E1ECE6; --amber:#B7791F; --amber-soft:#F7EBD3;
+  --display:"Cormorant Garamond",Garamond,"Times New Roman",serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#111618; --sheet:#182023; --ink:#E5EBE7; --muted:#97A6A0; --rule:#2A3538;
+  --moss:#86C3AD; --moss-soft:#1E3330; --amber:#E2B262; --amber-soft:#3A2F1C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#111618; --sheet:#182023; --ink:#E5EBE7; --muted:#97A6A0; --rule:#2A3538;
+  --moss:#86C3AD; --moss-soft:#1E3330; --amber:#E2B262; --amber-soft:#3A2F1C; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--paper);color:var(--ink)}
+body{font-family:var(--body);font-size:16px;line-height:1.55;margin:0}
+.wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 120px;display:flex;flex-direction:column;gap:20px}
+header.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.date{font-family:var(--display);font-size:1.6rem;font-weight:600;margin:0;text-wrap:balance}
+.meta{font-family:var(--mono);font-size:.75rem;color:var(--muted);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.note{font-size:.9rem;color:var(--muted);margin:0}
+
+.entry{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:22px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.theme{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--moss);font-weight:600}
+.hw{font-family:var(--display);font-weight:600;font-size:2.6rem;line-height:1.05;margin:0;overflow-wrap:anywhere}
+.pron{font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.pos{font-style:italic;font-family:var(--display);font-size:1.1rem;color:var(--muted);margin-right:6px}
+.def{margin:0;font-size:1.05rem}
+.ex{margin:0;font-family:var(--display);font-style:italic;font-size:1.2rem;line-height:1.4;border-left:2px solid var(--moss);padding-left:12px;color:var(--ink)}
+label.small{font-size:.8rem;color:var(--muted);font-weight:500}
+textarea{width:100%;min-height:72px;resize:vertical;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px}
+textarea:focus-visible,button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
+
+.btn{font:inherit;font-weight:600;font-size:.95rem;border-radius:999px;padding:10px 18px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--moss);border-color:var(--moss);color:var(--sheet)}
+.btn.got{border-color:var(--moss);color:var(--moss)}
+.btn.got[aria-pressed="true"]{background:var(--moss);color:var(--sheet)}
+.btn.shaky{border-color:var(--amber);color:var(--amber)}
+.btn.shaky[aria-pressed="true"]{background:var(--amber);color:var(--sheet)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chip{font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
+.chip.got{background:var(--moss-soft);color:var(--moss)}
+.chip.shaky{background:var(--amber-soft);color:var(--amber)}
+
+.banner{background:var(--moss-soft);color:var(--ink);border-radius:6px;padding:16px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.banner p{margin:0}
+
+.progress{display:flex;gap:4px;flex-wrap:wrap}
+.progress span{width:18px;height:6px;border-radius:3px;background:var(--rule)}
+.progress span.done{background:var(--moss)}
+.progress span.s{background:var(--amber)}
+.progress span.cur{outline:2px solid var(--ink);outline-offset:1px}
+.reveal[hidden]{display:none!important}
+
+.search{width:100%;font:inherit;padding:10px 14px;border:1px solid var(--rule);border-radius:999px;background:var(--sheet);color:var(--ink)}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filters button{font:inherit;font-size:.85rem;padding:6px 14px;border-radius:999px;border:1px solid var(--rule);background:transparent;color:var(--muted);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.lib{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.lib details{border-bottom:1px solid var(--rule);padding:12px 2px}
+.lib summary{cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:baseline;list-style:none}
+.lib summary::-webkit-details-marker{display:none}
+.lib .w{font-family:var(--display);font-weight:600;font-size:1.35rem}
+.lib .d{font-size:.88rem;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px}
+.lib .body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
+.mine{margin:0;font-size:.95rem}
+.mine b{font-weight:600;color:var(--moss)}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--sheet);border-top:1px solid var(--rule);display:flex;justify-content:center;gap:4px;padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));z-index:5}
+nav.tabs a{flex:1;max-width:180px;text-align:center;text-decoration:none;color:var(--muted);font-weight:600;font-size:.9rem;padding:10px 6px;border-radius:999px}
+nav.tabs a[aria-current="page"]{background:var(--moss-soft);color:var(--moss)}
+.save{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.entry{animation:rise .35s ease-out both}@keyframes rise{from{transform:translateY(6px)}to{transform:none}}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1 class="date" id="dateLabel">Today</h1>
+    <span class="meta" id="countLabel"></span>
+  </header>
+
+  <section id="view-today"></section>
+  <section id="view-review" hidden></section>
+  <section id="view-library" hidden></section>
+
+  <p class="save" id="saveState">Saved on this device.</p>
+</div>
+
+<nav class="tabs" aria-label="Sections">
+  <a href="#today" data-view="today">Today</a>
+  <a href="#review" data-view="review">Review</a>
+  <a href="#library" data-view="library">Library</a>
+</nav>
+
+<script>
+const DATA = __DATA__;
+const WORDS = DATA.words;
+const BONUS = DATA.bonus || [];
+const ALL = WORDS.concat(BONUS);
+const START = new Date(2026, 9, 28); // Wed 28 Oct 2026, local time
+const PER_DAY = 2;
+
+/* ---------- schedule ---------- */
+function dayStart(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function slotIndex(d){ // days from START up to but not including d (two words every day)
+  const x=dayStart(START), end=dayStart(d);
+  if (end < x) return -1;
+  return Math.round((end - x)/86400000);
+}
+function wordsFor(d){
+  d = dayStart(d);
+  if (d < dayStart(START)) return [];
+  const s = slotIndex(d)*PER_DAY;
+  return WORDS.slice(s, s+PER_DAY);
+}
+function introducedThrough(d){ // ids introduced on or before d
+  d = dayStart(d); if (d < dayStart(START)) return 0;
+  return Math.min((slotIndex(d)+1)*PER_DAY, WORDS.length);
+}
+function introDate(id){
+  const w = ALL[id];
+  if (w && w.b){ const k = id - WORDS.length; const iso = state.b[k]; if (iso){ const [y,m,dd]=iso.split("-").map(Number); return new Date(y,m-1,dd); } }
+  return addDays(dayStart(START), Math.floor(id/PER_DAY));
+}
+function isoDay(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function extrasOn(d){ const iso=isoDay(dayStart(d)); return Object.keys(state.b).filter(k=>state.b[k]===iso).map(k=>BONUS[+k]).filter(Boolean); }
+function extrasCollected(){ return Object.keys(state.b).map(k=>BONUS[+k]).filter(Boolean); }
+function weekWindow(d){ // Sunday reviews the seven days before it; other days warm up on the week so far
+  d = dayStart(d);
+  if (d.getDay()===0) return [addDays(d,-7), addDays(d,-1)];
+  return [addDays(d,-d.getDay()), d];
+}
+
+/* ---------- state ---------- */
+let state = { r:{}, s:{}, b:{} }; // r: id -> "got"|"shaky", s: id -> sentence
+let db=null, docRef=null, writing=false, dirty=false, timer=null, cloud=false;
+function lsRead(){ try{ const v=localStorage.getItem("lexicon-state"); if(v) state=Object.assign({r:{},s:{},b:{}},JSON.parse(v)); }catch(e){} }
+function lsWrite(){ try{ localStorage.setItem("lexicon-state", JSON.stringify(state)); }catch(e){} }
+const saveEl = document.getElementById("saveState");
+function markSaved(msg){ saveEl.textContent = msg; }
+function persist(){
+  lsWrite();
+  if (!docRef){ markSaved("Saved on this device."); return; }
+  dirty = true; clearTimeout(timer); timer = setTimeout(flush, 700);
+}
+async function flush(){
+  if (writing || !dirty) return;
+  writing = true; dirty = false; markSaved("Saving…");
+  try{ await docRef.set({r:state.r, s:state.s, b:state.b, updated:new Date().toISOString()}); markSaved("Saved to your lexicon."); }
+  catch(e){ markSaved("Saved on this device. Syncing will retry."); dirty = true; }
+  writing = false; if (dirty) timer=setTimeout(flush, 1500);
+}
+async function connect(){
+  try{
+    if (!window.claude || !window.claude.use) return;
+    const [d,u] = await Promise.all([claude.use("db"), claude.use("user")]);
+    if (!d || !u) return;
+    const id = await u.id(); if (!id) return;
+    db = d; docRef = db.doc("data/users/"+id+"/progress");
+    const snap = await docRef.get();
+    if (snap.exists){
+      const remote = snap.data()||{};
+      state.r = Object.assign({}, state.r, remote.r||{});
+      state.s = Object.assign({}, state.s, remote.s||{});
+      state.b = Object.assign({}, remote.b||{}, state.b);
+      lsWrite(); render();
+    } else if (Object.keys(state.r).length || Object.keys(state.s).length || Object.keys(state.b).length){ persist(); }
+    cloud = true; markSaved("Synced to your lexicon.");
+  }catch(e){ docRef=null; }
+}
+function setRating(id, v){ if (state.r[id]===v) delete state.r[id]; else state.r[id]=v; persist(); }
+function setSentence(id, t){ t=t.trim(); if (t) state.s[id]=t; else delete state.s[id]; persist(); }
+
+/* ---------- helpers ---------- */
+const $ = (t,cls,txt)=>{ const e=document.createElement(t); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
+const fmt = d => d.toLocaleDateString(undefined,{weekday:"long", month:"long", day:"numeric"});
+function sentenceBox(w){
+  const wrap=$("div"); wrap.style.display="flex"; wrap.style.flexDirection="column"; wrap.style.gap="6px";
+  const lab=$("label","small","Use it in your own sentence"); lab.htmlFor="s-"+w.id;
+  const ta=$("textarea"); ta.id="s-"+w.id; ta.placeholder="Write something true about your week…"; ta.value=state.s[w.id]||"";
+  ta.addEventListener("input",()=>{ clearTimeout(ta._t); ta._t=setTimeout(()=>setSentence(w.id, ta.value),600); });
+  ta.addEventListener("blur",()=>setSentence(w.id, ta.value));
+  wrap.append(lab,ta); return wrap;
+}
+function ratingRow(w, after){
+  const row=$("div","row");
+  const g=$("button","btn got","Got it"), s=$("button","btn shaky","Shaky");
+  const sync=()=>{ g.setAttribute("aria-pressed", state.r[w.id]==="got"); s.setAttribute("aria-pressed", state.r[w.id]==="shaky"); };
+  g.onclick=()=>{ setRating(w.id,"got"); sync(); after&&after(); };
+  s.onclick=()=>{ setRating(w.id,"shaky"); sync(); after&&after(); };
+  sync(); row.append(g,s); return row;
+}
+function entry(w, opts={}){
+  const c=$("article","entry");
+  c.append($("span","theme",w.t));
+  c.append($("h2","hw",w.w));
+  c.append($("span","pron",w.p));
+  const def=$("p","def"); def.append($("span","pos",w.pos), document.createTextNode(w.d));
+  const ex=$("p","ex",w.e);
+  if (opts.hideMeaning){
+    const box=$("div","reveal"); box.hidden=true; box.style.display="flex"; box.style.flexDirection="column"; box.style.gap="10px";
+    box.append(def,ex);
+    const show=$("button","btn primary","Show meaning");
+    show.onclick=()=>{ box.hidden=false; show.hidden=true; };
+    const prompt=$("p","note","Say the meaning to yourself first, then check.");
+    c.append(prompt, show, box);
+  } else c.append(def, ex);
+  if (opts.sentence) c.append(sentenceBox(w));
+  if (opts.rate) c.append(ratingRow(w, opts.onRate));
+  return c;
+}
+
+/* ---------- views ---------- */
+const now = new Date();
+function renderToday(){
+  const v=document.getElementById("view-today"); v.replaceChildren();
+  const d=dayStart(now);
+  const ws=wordsFor(d);
+  if (d.getDay()===0){
+    const b=$("div","banner"); b.append($("p",null,"It's Sunday, review day. Recall this past week's words, then enjoy today's new ones."));
+    const a=$("a","btn primary","Start review"); a.href="#review"; a.style.textDecoration="none"; b.append(a); v.append(b);
+  }
+  if (!ws.length){
+    v.append($("p","empty","You've worked through all "+WORDS.length.toLocaleString()+" words. Head to the Library to revisit them."));
+  } else {
+    ws.forEach(w=>v.append(entry(w,{sentence:true})));
+    const n=$("p","note","Try both words in conversation or your journal today. Sunday's review will ask for them back.");
+    v.append(n);
+  }
+  const ex=extrasOn(d);
+  if (ex.length){ v.append($("span","theme","Extra words today")); ex.forEach(w=>v.append(entry(w,{sentence:true}))); }
+  v.style.display="flex"; v.style.flexDirection="column"; v.style.gap="16px";
+}
+
+let rv = {list:[], i:0};
+function buildReview(){
+  const d=dayStart(now); const [mon,end]=weekWindow(d);
+  const week=[]; for(let x=new Date(mon); x<=end; x=addDays(x,1)) week.push(...wordsFor(x), ...extrasOn(x));
+  const weekIds=new Set(week.map(w=>w.id));
+  const seen=introducedThrough(d);
+  const firstWeek=week.length?week[0].id:seen;
+  const extras=[];
+  for (let id=0; id<firstWeek && id<seen; id++){
+    if (weekIds.has(id)) continue;
+    if (state.r[id]==="shaky") extras.push({w:WORDS[id], why:"Marked shaky"});
+  }
+  extrasCollected().forEach(w=>{ if(!weekIds.has(w.id) && state.r[w.id]==="shaky") extras.push({w, why:"Marked shaky"}); });
+  // refreshers: words introduced 4 and 12 weeks before this week
+  [28,84].forEach(back=>{
+    const m=addDays(mon,-back);
+    for(let x=new Date(m); x<addDays(m,7); x=addDays(x,1)) wordsFor(x).forEach(w=>{ if(!extras.find(e=>e.w.id===w.id) && state.r[w.id]!=="shaky") extras.push({w, why: back===28?"From 4 weeks ago":"From 12 weeks ago"}); });
+  });
+  rv.list = week.map(w=>({w, why:"This week"})).concat(extras.slice(0,12));
+  rv.i = 0;
+}
+function renderReview(){
+  const v=document.getElementById("view-review"); v.replaceChildren();
+  v.style.display="flex"; v.style.flexDirection="column"; v.style.gap="16px";
+  if (!rv.list.length){ v.append($("p","empty","No words to review yet. Check back after your first few days.")); return; }
+  const isSun = dayStart(now).getDay()===0;
+  v.append($("p","note", isSun ? "Recall this week's words, write a sentence, and mark how well each one stuck. Shaky words come back next Sunday."
+                               : "Review day is Sunday, but you can warm up anytime with this week's words so far."));
+  const prog=$("div","progress");
+  rv.list.forEach((it,k)=>{ const s=$("span"); const r=state.r[it.w.id]; if(r==="got") s.className="done"; if(r==="shaky") s.className="s"; if(k===rv.i) s.classList.add("cur"); prog.append(s); });
+  v.append(prog);
+  if (rv.i >= rv.list.length){
+    const got=rv.list.filter(it=>state.r[it.w.id]==="got").length, sh=rv.list.filter(it=>state.r[it.w.id]==="shaky").length;
+    const done=$("article","entry"); done.append($("h2","hw","Review complete"));
+    done.append($("p","def", got+" got it, "+sh+" shaky. Shaky words will reappear in next week's review."));
+    const again=$("button","btn","Go through again"); again.onclick=()=>{ rv.i=0; renderReview(); };
+    done.append(again); v.append(done); return;
+  }
+  const it=rv.list[rv.i];
+  v.append($("span","meta",(rv.i+1)+" of "+rv.list.length+" · "+it.why));
+  v.append(entry(it.w,{hideMeaning:true, sentence:true, rate:true, onRate:()=>{ setTimeout(()=>{ rv.i++; renderReview(); window.scrollTo({top:0}); },250); }}));
+  const nav=$("div","row");
+  const prev=$("button","btn","Back"); prev.disabled=rv.i===0; prev.onclick=()=>{ rv.i=Math.max(0,rv.i-1); renderReview(); };
+  const skip=$("button","btn","Skip"); skip.onclick=()=>{ rv.i++; renderReview(); };
+  nav.append(prev,skip); v.append(nav);
+}
+
+let lib = {q:"", f:"all"};
+function renderLibrary(){
+  const v=document.getElementById("view-library"); v.replaceChildren();
+  v.style.display="flex"; v.style.flexDirection="column"; v.style.gap="14px";
+  const n=introducedThrough(now);
+  const sh=Object.values(state.r).filter(x=>x==="shaky").length;
+  const sc=Object.keys(state.s).length;
+  v.append($("p","note", (n+extrasCollected().length).toLocaleString()+" words collected so far · "+sc+" with your own sentence · "+sh+" marked shaky"));
+  const q=$("input","search"); q.type="search"; q.id="libsearch"; q.placeholder="Search words or meanings"; q.value=lib.q;
+  q.addEventListener("input",()=>{ lib.q=q.value; drawList(); });
+  const f=$("div","filters");
+  [["all","All"],["shaky","Shaky"],["mine","My sentences"]].forEach(([k,l])=>{ const b=$("button",null,l); b.setAttribute("aria-pressed",lib.f===k); b.onclick=()=>{ lib.f=k; renderLibrary(); }; f.append(b); });
+  const list=$("div","lib");
+  v.append(q,f,list);
+  function drawList(){
+    list.replaceChildren();
+    const term=lib.q.trim().toLowerCase();
+    let items=WORDS.slice(0,n).concat(extrasCollected()).sort((a,b)=>introDate(b.id)-introDate(a.id)||b.id-a.id);
+    if (lib.f==="shaky") items=items.filter(w=>state.r[w.id]==="shaky");
+    if (lib.f==="mine") items=items.filter(w=>state.s[w.id]);
+    if (term) items=items.filter(w=>w.w.toLowerCase().includes(term)||w.d.toLowerCase().includes(term));
+    if (!items.length){ list.append($("p","empty", n? "Nothing matches yet." : "Your first words arrive today.")); return; }
+    items.slice(0,400).forEach(w=>{
+      const det=$("details"); const sum=$("summary");
+      sum.append($("span","w",w.w), $("span","d",w.d));
+      const r=state.r[w.id]; if (r) sum.append($("span","chip "+r, r==="got"?"Got it":"Shaky"));
+      const body=$("div","body");
+      body.append($("span","pron",w.p+" · "+w.t+" · "+introDate(w.id).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})));
+      const def=$("p","def"); def.append($("span","pos",w.pos), document.createTextNode(w.d)); body.append(def, $("p","ex",w.e));
+      det.addEventListener("toggle",()=>{ if(det.open && !det._b){ det._b=1; body.append(sentenceBox(w), ratingRow(w)); } });
+      det.append(sum,body); list.append(det);
+    });
+  }
+  drawList();
+}
+
+/* ---------- routing ---------- */
+function takeBonusFromHash(){
+  const m=/^bonus(\d+)$/.exec(location.hash.replace("#",""));
+  if (!m) return false;
+  const n=Math.min(+m[1], BONUS.length); let changed=false; const iso=isoDay(new Date());
+  for (let i=0;i<n;i++) if (!state.b[i]){ state.b[i]=iso; changed=true; }
+  if (changed) persist();
+  return true;
+}
+function current(){ const h=location.hash.replace("#",""); if (["today","review","library"].includes(h)) return h; return "today"; }
+function render(){
+  const view=current();
+  document.querySelectorAll("nav.tabs a").forEach(a=>a.setAttribute("aria-current", a.dataset.view===view?"page":"false"));
+  ["today","review","library"].forEach(k=>document.getElementById("view-"+k).hidden = k!==view);
+  document.getElementById("dateLabel").textContent = view==="library" ? "Your lexicon" : view==="review" ? "Weekly review" : fmt(now);
+  const n=introducedThrough(now);
+  document.getElementById("countLabel").textContent = n ? "Words "+Math.max(1,n-1).toLocaleString()+"–"+n.toLocaleString()+" of "+WORDS.length.toLocaleString() : WORDS.length.toLocaleString()+" words ahead";
+  if (view==="today") renderToday();
+  if (view==="review"){ if(!rv.list.length) buildReview(); renderReview(); }
+  if (view==="library") renderLibrary();
+}
+window.addEventListener("hashchange",()=>{ takeBonusFromHash(); if(current()==="review") buildReview(); render(); window.scrollTo({top:0}); });
+lsRead(); takeBonusFromHash(); render(); connect().then(()=>{ if(takeBonusFromHash()) render(); });
+</script>
